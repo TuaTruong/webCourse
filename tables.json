@@ -1,0 +1,25 @@
+{
+  "name": "Ban lam viec go cong nghiep",
+  "data": {
+    "1m2": {
+      "total": 18,
+      "color": {
+        "Lat": 1,
+        "Vang": 2,
+        "Ghi": 5,
+        "Oc cho": 2,
+        "61": 5,
+        "Xoan": 1
+      },
+      "priceIn": 1000000,
+      "priceOut": 10000,
+      "numSold": 0,
+      "customer": [
+        {
+          "phone": 912121212,
+          "soldAt": 65
+        }
+      ]
+    }
+  }
+}

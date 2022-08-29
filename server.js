@@ -12,10 +12,15 @@ mongoose
     useCreateIndex: true,
     useFindAndModify: false,
   })
-  .then(() => console.log('DB connections successful'));
+  .then(() => console.log('DB connections successful'))
+  .catch((err) => {
+    console.error(err.stack);
+    process.exit();
+  });
 
 //START SERVER
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`App is running on port ${port}`);
 });
+//Test

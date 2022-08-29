@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-// const slugify = require('slugify');
+
+const slugify = require('slugify');
 const validator = require('validator');
 const tourSchema = new mongoose.Schema(
   {
@@ -8,7 +9,7 @@ const tourSchema = new mongoose.Schema(
       required: [true, 'A tour must have a name'],
       unique: true,
       trim: true,
-      validate: [validator.isAlpha, 'Tour name mus only contain characters'],
+      // validate: [validator.isAlpha, 'abc'],
     },
     slug: String,
     duration: {
@@ -90,7 +91,7 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 // ! DOCUMENT MIDDLEWARE: RUN BEFORE .SAVE() AND .CREATE()
 tourSchema.pre('save', function (next) {
-  this.slug = this.name.replace(' ', '-');
+  this.slug = slugify(this.name, { tolower: true });
   next();
 });
 
@@ -107,7 +108,7 @@ tourSchema.pre(/^find/, function (next) {
 });
 // * this command will be accessed after the query is finished
 tourSchema.post(/^find/, function (doc, next) {
-  console.log(`Query took ${Date.now() - doc.start}`);
+  console.log(Date.now() - doc.start);
   next();
 });
 

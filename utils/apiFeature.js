@@ -24,21 +24,14 @@ class APIFeatures {
     } else {
       this.query = this.query.sort('-createdAt');
     }
-
-    // 3, Fields limiting
-    if (this.queryString.fields) {
-      const fields = this.queryString.fields.split(',').join(' ');
-      this.query = this.query.select(fields);
-    } else {
-      this.query = this.query.select('-__v');
-    }
     return this;
   }
   limitFields() {
     // 3, Fields limiting
     if (this.queryString.fields) {
-      const fields = this.queryString.fields.split(',').join(' ');
+      const fields = this.queryString.fields.split(',').join('');
       this.query = this.query.select(fields);
+      console.log(fields);
     } else {
       this.query = this.query.select('-__v');
     }
