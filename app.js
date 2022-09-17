@@ -27,6 +27,6 @@ app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`));
 });
 
-//! When ever a middleware hane 4 params, it will assume this is a GLOBAL handling error middleware
+//! When ever a middleware have 4 params, it will assume this is a GLOBAL handling error middleware
 app.use(globalErrorHandler);
 module.exports = app;

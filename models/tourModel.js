@@ -108,7 +108,6 @@ tourSchema.pre(/^find/, function (next) {
 });
 // * this command will be accessed after the query is finished
 tourSchema.post(/^find/, function (doc, next) {
-  console.log(Date.now() - doc.start);
   next();
 });
 
