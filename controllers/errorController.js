@@ -5,11 +5,18 @@ const handleCastErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
-const handleDuplicateDB = err => {
-  const value = err.keyValue.name
-  const message = `Duplicate field value: ${value}. Please use another value!`
-  return new AppError(message,400)
-}
+const handleDuplicateDB = (err) => {
+  const value = err.keyValue.name;
+  const message = `Duplicate field value: ${value}. Please use another value!`;
+  return new AppError(message, 400);
+};
+
+const handleValidationErrorDB = (err) => {
+  const errors = Object.values(err.errors).map((el) => el.message);
+  console.log('List err: ', errors);
+  const message = `Invalid input data. ${errors.join(' ')}`;
+  return new AppError(message, 400);
+};
 
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -30,7 +37,7 @@ const sendErrorProduct = (err, res) => {
     // Programming or other unknown error: don't leak error detail
   } else {
     //1, log error
-    console.error('ERROR: ', err);
+    // console.error('ERROR: ', err);
 
     // 2, Send generic message
     res.status(500).json({
@@ -49,10 +56,13 @@ module.exports = (err, req, res, next) => {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'product') {
     // Not pratical to override the err object, so create a new error object
-    let error = { ...err };
+    let error = JSON.parse(JSON.stringify(err));
+
     if (error.name == 'CastError') error = handleCastErrorDB(error);
-    if (error.code === 11000) error = handleDuplicateDB(error)
-    sendErrorProduct(err, res);
+    if (error.code === 11000) error = handleDuplicateDB(error);
+    if (error.name === 'ValidationError')
+      error = handleValidationErrorDB(error);
+    sendErrorProduct(error, res);
   }
 
   next();
