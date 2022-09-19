@@ -36,5 +36,3 @@ process.on('unhandledRejection', (err) => {
     process.exit(1); // 1 stand for error, 0 stand for success
   });
 });
-
-console.log(object);

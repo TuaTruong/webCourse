@@ -18,6 +18,11 @@ const handleValidationErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
+const handleJWTError = (err) => {
+  const message = 'You provided an invalid token. Please try again';
+  return new AppError(message, 401);
+};
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -58,12 +63,13 @@ module.exports = (err, req, res, next) => {
     // Not pratical to override the err object, so create a new error object
     let error = JSON.parse(JSON.stringify(err));
 
-    if (error.name == 'CastError') error = handleCastErrorDB(error);
+    if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateDB(error);
     if (error.name === 'ValidationError')
       error = handleValidationErrorDB(error);
+    if (error.name === 'JsonWebTokenError') error = handleJWTError(error);
+
     sendErrorProduct(error, res);
   }
-
   next();
 };
