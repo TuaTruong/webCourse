@@ -41,7 +41,11 @@ const userSchema = new mongoose.Schema({
   },
   passChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpries: Date,
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 //! This middleware occur before SAVED to the database
@@ -54,6 +58,18 @@ userSchema.pre('save', async function (next) {
 
   // Delete the passwordConfirm field
   this.passwordConfirm = undefined;
+});
+
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+  this.passChangedAt = Date.now() - 1000; // In case it delays
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  // This point to the current query
+  this.find({ active: {$ne : false} });
+  next();
 });
 
 // This is called instance function, it is available on all collections of a document
@@ -83,8 +99,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .digest('hex');
 
   // Expires in 10 minutes
-  this.passwordResetExpries = Date.now() + 10 * 60 * 1000;
-
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
 
