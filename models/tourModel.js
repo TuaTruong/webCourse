@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-
+// const User = require('./userModel');
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -76,6 +76,31 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      //GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'], // Alway Point
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
   {
     toJSON: { virtuals: true },
@@ -94,10 +119,19 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
-// * this command will be accessed after the query is finished
-// tourSchema.post('save', function (doc, next) {
-//   console.log(doc);
-// });
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passChangedAt',
+  });
+  next();
+});
+// Embedding for guide
+// tourSchema.pre("save", async function(next){
+//   const guidesPromise = this.guides.map(async id => await User.findById(id))
+//   this.guides = await Promise.all(guidesPromise)
+//   next()
+// })
 
 // ! QUERY MIDDLEWARE
 tourSchema.pre(/^find/, function (next) {

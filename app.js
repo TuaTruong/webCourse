@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
-const hpp = require("hpp")
+const hpp = require('hpp');
 const AppError = require('./utils/appError');
 // GLOBAL MIDDLEWARE
 if (process.env.NODE_ENV === 'development') {
@@ -37,9 +37,11 @@ app.use(xss());
 app.use(express.static(`${__dirname}/public`));
 
 // Prevent parameter pollution
-app.use(hpp({
-  whitelist : ["duration"] // Allowed duplicated query
-}))
+app.use(
+  hpp({
+    whitelist: ['duration'], // Allowed duplicated query
+  })
+);
 
 // Test middleware
 app.use((req, res, next) => {
@@ -49,9 +51,11 @@ app.use((req, res, next) => {
 
 const userRouter = require(`./routes/userRoutes`);
 const tourRouter = require(`./routes/tourRoutes`);
+const reviewRouter = require('./routes/reviewRoutes');
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 // ! Handle all routes that has not been implemented
 app.all('*', (req, res, next) => {

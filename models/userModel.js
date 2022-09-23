@@ -19,8 +19,8 @@ const userSchema = new mongoose.Schema({
   photo: String,
   role: {
     type: String,
-    enum: ['user', 'guide', 'lead-guide', 'admin'],
     default: 'user',
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
   },
   password: {
     type: String,
@@ -68,7 +68,7 @@ userSchema.pre('save', function (next) {
 
 userSchema.pre(/^find/, function (next) {
   // This point to the current query
-  this.find({ active: {$ne : false} });
+  this.find({ active: { $ne: false } });
   next();
 });
 

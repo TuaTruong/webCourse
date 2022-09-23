@@ -53,6 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     passChangedAt: req.body.passChangedAt,
+    role : req.body.role
   });
 
   createSendToken(newUser, 201, res);
@@ -67,10 +68,12 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   //! 2, check if user exists and password is correct
   const user = await User.findOne({ email }).select('+password'); // We have to select because it has been unselected in model
-  const correct = await user.correctPassword(password, user.password);
-  console.log(user);
+  if (!user){
+    return next(new AppError('Incorrect email or password', 401));
+  }
 
-  if (!user || !correct) {
+  const correct = await user.correctPassword(password, user.password);
+  if (!correct) {
     return next(new AppError('Incorrect email or password', 401));
   }
 
