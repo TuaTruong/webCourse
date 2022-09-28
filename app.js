@@ -18,10 +18,11 @@ app.use(helmet());
 
 // Limit request from sam API
 const limiter = rateLimit({
-  max: 100,
+  max: 100, // Give max 100 access
   windowMs: 60 * 60 * 1000, // One hour
   message: 'Too many request from this IP, please try again in an hour',
 });
+
 app.use('/api', limiter); // Apply limiter to all /api route
 
 // Body parser, reading data from body into req.body
@@ -59,11 +60,7 @@ app.use('/api/v1/reviews', reviewRouter);
 
 // ! Handle all routes that has not been implemented
 app.all('*', (req, res, next) => {
-  // const err = new Error(`Can't find ${req.originalUrl} on this server`);
-  // err.status = 'fail';
-  // err.statusCode = 404;
   // ! If we pass an param in the next() function, it will assume that the param is an err, stop all the middleware and send the err to the global error handling middleware
-  // next(err);
   next(new AppError(`Can't find ${req.originalUrl} on this server`));
 });
 
