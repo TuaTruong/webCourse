@@ -1,6 +1,7 @@
 const AppError = require('./../utils/appError');
 
 const handleCastErrorDB = (err) => {
+  console.log('CastError');
   const message = `Invavid ${err.path}: ${err.value}.`;
   return new AppError(message, 400);
 };

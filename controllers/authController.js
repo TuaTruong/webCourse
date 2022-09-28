@@ -28,7 +28,7 @@ const createSendToken = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000 // hours, minute, second, milisecond
     ),
     // secure: true, // Cookie will be sent on only encrypted connection
-    httpOnly: true,
+    httpOnly: true, // Secure
   };
 
   // Send cookie
@@ -73,6 +73,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   const correct = await user.correctPassword(password, user.password);
+
   if (!correct) {
     return next(new AppError('Incorrect email or password', 401));
   }
@@ -205,19 +206,18 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
-  console.log('Start');
   //1, Get user from collection
   //! req.user is from the authController.protect() middleware
   const user = await User.findById(req.user._id).select('+password');
   if (!user) {
     return next(new AppError('Please provide a valid id', 400));
   }
-  console.log('User OK');
+
   //2, Check if posted current password is correct
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
     return next(new AppError('Your current password is not correct', 401));
   }
-  console.log('PASSWORD OK');
+
   //3, If so, update password
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;

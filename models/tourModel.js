@@ -113,6 +113,13 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+// Virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
+});
+
 // ! DOCUMENT MIDDLEWARE: RUN BEFORE .SAVE() AND .CREATE()
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { tolower: true });
@@ -126,6 +133,7 @@ tourSchema.pre(/^find/, function (next) {
   });
   next();
 });
+
 // Embedding for guide
 // tourSchema.pre("save", async function(next){
 //   const guidesPromise = this.guides.map(async id => await User.findById(id))

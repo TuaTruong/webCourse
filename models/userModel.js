@@ -48,23 +48,24 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-//! This middleware occur before SAVED to the database
-userSchema.pre('save', async function (next) {
-  //! This middleware will only occur if the password is modified (update/create)
-  if (!this.isModified('password')) return next(); // If it is not modified => quit
+// //! This middleware occur before SAVED to the database
+// userSchema.pre('save', async function (next) {
+// ENCRYPT PASSWORD
+//   //! This middleware will only occur if the password is modified (update/create)
+//   if (!this.isModified('password')) return next(); // If it is not modified => quit
 
-  // Second params stand for how strong the password will be encrypted
-  this.password = await bcrypt.hash(this.password, 8);
+//   // Second params stand for how strong the password will be encrypted
+//   this.password = await bcrypt.hash(this.password, 12);
 
-  // Delete the passwordConfirm field
-  this.passwordConfirm = undefined;
-});
+//   // Delete the passwordConfirm field
+//   this.passwordConfirm = undefined;
+// });
 
-userSchema.pre('save', function (next) {
-  if (!this.isModified('password') || this.isNew) return next();
-  this.passChangedAt = Date.now() - 1000; // In case it delays
-  next();
-});
+// userSchema.pre('save', function (next) {
+//   if (!this.isModified('password') || this.isNew) return next();
+//   this.passChangedAt = Date.now() - 1000; // In case it delays
+//   next();
+// });
 
 userSchema.pre(/^find/, function (next) {
   // This point to the current query
