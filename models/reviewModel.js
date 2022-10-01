@@ -41,5 +41,27 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+  console.log(stats);
+};
+
+reviewSchema.pre('save', function (next) {
+  // Use this.constructor to use statics functions
+  this.constructor.calcAverageRatings(this.tour); // Review.calcAverageRatings but Review has been defined
+  next();
+});
+
 const Review = mongoose.model('Review', reviewSchema);
 module.exports = Review;

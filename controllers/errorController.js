@@ -47,9 +47,6 @@ const sendErrorProduct = (err, res) => {
     });
     // Programming or other unknown error: don't leak error detail
   } else {
-    //1, log error
-    // console.error('ERROR: ', err);
-
     // 2, Send generic message
     res.status(500).json({
       status: 'error',
@@ -64,7 +61,7 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+    sendErrorProduct(err, res);
   } else if (process.env.NODE_ENV === 'product') {
     // Not pratical to override the err object, so create a new error object
     let error = JSON.parse(JSON.stringify(err));

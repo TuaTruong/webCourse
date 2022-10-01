@@ -108,6 +108,10 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+// tourSchema.index({ price: 1 }); //1 stands for ascending order, -1 stand for descending order
+tourSchema.index({ price: 1, ratingsAverage: -1 }); //1 stands for ascending order, -1 stand for descending order
+tourSchema.index({ slug: 1 });
+
 // ! Virtual property helps database have more space, but we can do any query with it
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
