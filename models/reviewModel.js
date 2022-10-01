@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const Tour = require("./../models/tourModel")
 const reviewSchema = new mongoose.Schema(
   {
     review: {
@@ -41,6 +41,7 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
+
 reviewSchema.statics.calcAverageRatings = async function (tourId) {
   const stats = await this.aggregate([
     {
@@ -54,13 +55,16 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
       },
     },
   ]);
-  console.log(stats);
+  await Tour.findByIdAndUpdate(tourId,{
+    ratingQuantity:stats[0]["nRating"],
+    ratingsAverage: stats[0]["avgRating"]
+  })
 };
 
-reviewSchema.pre('save', function (next) {
+// We have to use post instead of pre because we have to calculate the ratingAverage after it is saved to the DB 
+reviewSchema.post('save', function () {
   // Use this.constructor to use statics functions
   this.constructor.calcAverageRatings(this.tour); // Review.calcAverageRatings but Review has been defined
-  next();
 });
 
 const Review = mongoose.model('Review', reviewSchema);
