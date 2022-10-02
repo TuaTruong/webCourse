@@ -32,10 +32,10 @@ const createSendToken = (user, statusCode, res) => {
   };
 
   // Send cookie
-  if (process.env.NODE_ENV === "production") cookieOptions.secure = true
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
   res.cookie('jwt', token, cookieOptions);
   // Hiding password from response
-  user.password = undefined
+  user.password = undefined;
 
   res.status(statusCode).json({
     status: 'success',
@@ -53,7 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     passChangedAt: req.body.passChangedAt,
-    role : req.body.role
+    role: req.body.role,
   });
 
   createSendToken(newUser, 201, res);
@@ -68,7 +68,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   //! 2, check if user exists and password is correct
   const user = await User.findOne({ email }).select('+password'); // We have to select because it has been unselected in model
-  if (!user){
+  if (!user) {
     return next(new AppError('Incorrect email or password', 401));
   }
 
@@ -83,14 +83,12 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  console.log('START PROTECT');
   //1, get token and check if it's exist
   let token;
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
-    console.log('AUTHORIZED: ', req.headers.authorization);
     token = req.headers.authorization.split(' ')[1];
   }
   if (!token) {
@@ -119,7 +117,6 @@ exports.protect = catchAsync(async (req, res, next) => {
       )
     );
   }
-  console.log('PROTECT OK');
   // Grant access to the next route
   req.user = currentUser;
   next();

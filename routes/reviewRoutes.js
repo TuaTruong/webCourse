@@ -14,6 +14,14 @@ router
   );
 
 router
+  .route('/deleteAllReviews')
+  .delete(
+    authController.restrictTo('admin'),
+    reviewController.setTourUserIds,
+    reviewController.deleteAllReview
+  );
+
+router
   .route('/:id')
   .delete(
     authController.restrictTo('user', 'admin'),
