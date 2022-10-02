@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.use('/:tourId/reviews', reviewRouter);
 
-
 router
   .route('/top-5-cheap')
   .get(tourController.aliasTopTours, tourController.getAllTours);
@@ -20,6 +19,11 @@ router
     authController.restrictTo('admin', 'lead-guide', 'guide'),
     tourController.getMonthlyPlan
   );
+
+router.route(
+  '/tours-within/:distance/center/:latlng/unit/:unit',tourController
+    .getToursWithin
+);
 
 router
   .route('/')
