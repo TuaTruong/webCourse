@@ -61,7 +61,7 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorProduct(err, res);
+    sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'product') {
     // Not pratical to override the err object, so create a new error object
     let error = JSON.parse(JSON.stringify(err));

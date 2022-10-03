@@ -8,7 +8,17 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const AppError = require('./utils/appError');
+const path = require('path');
+
+// Tell express what template engine we are using
+app.set('view engine', 'pug');
+// Define where these views are actually located in our file system
+app.set('views', path.join(`${__dirname}`, 'views'));
+
 // GLOBAL MIDDLEWARE
+// Serving static files
+app.use(express.static(path.join(`${__dirname}`, 'public')));
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -34,9 +44,6 @@ app.use(mongoSanitize());
 // Data sanitization against XSS
 app.use(xss());
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
-
 // Prevent parameter pollution
 app.use(
   hpp({
@@ -53,6 +60,14 @@ app.use((req, res, next) => {
 const userRouter = require(`./routes/userRoutes`);
 const tourRouter = require(`./routes/tourRoutes`);
 const reviewRouter = require('./routes/reviewRoutes');
+
+// ROUTES
+app.get('/', (req, res) => {
+  res.status(200).render('base', {
+    tour: 'The Forest Hiker',
+    user: 'Tuan',
+  });
+});
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
