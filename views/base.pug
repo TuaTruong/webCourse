@@ -3,14 +3,24 @@ doctype
 html(lang='en')
     head
         meta(charset='utf-8')
-        title Natours | #{tour}
+        meta(name='viewport' content='width=device-width, initial-scale=1.0')
+        title Natours | Exciting tours for adventurous people
+        link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,300i,700')
         link(rel='stylesheet' href='css/style.css')
         link(rel='shortcut icon' type='image/png' href='img/favicon.png')
     body
-        h1= tour
-        h2= user.toUpperCase()
-        //- h1 The Park Camper
-        //- Unbuffer code 
-        - const x = 9;
-        h2= 2+x
-        p This is just some text
+        // HEADER
+        header.header 
+            nav.na.nav--tours
+                a.nav__el(href='#') All tours
+            .heaser__logo
+                img(src='img/logo-white.png' alt='Natours logo')
+            nav.nav.nav--user
+                //- a.nav__el(href='#') My bookings
+                //- a.nav__el(href='#')
+                //-     img.nav__user-img(src='img/user.jpg' alt='User photo')
+                //-     span Jonas
+                button.nav__el Login
+                button.nav__el.nav__el--cta Sign up
+
+        // CONTENT
