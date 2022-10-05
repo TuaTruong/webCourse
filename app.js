@@ -61,11 +61,13 @@ const userRouter = require(`./routes/userRoutes`);
 const tourRouter = require(`./routes/tourRoutes`);
 const reviewRouter = require('./routes/reviewRoutes');
 const viewRouter = require("./routes/viewRoutes")
+
 // ROUTES
+app.use("/", viewRouter)
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
-app.use("/", viewRouter)
+
 // ! Handle all routes that has not been implemented
 app.all('*', (req, res, next) => {
   // ! If we pass an param in the next() function, it will assume that the param is an err, stop all the middleware and send the err to the global error handling middleware
