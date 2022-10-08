@@ -76,7 +76,6 @@ reviewSchema.post('save', async function () {
 });
 
 reviewSchema.pre(/^findOneAnd/, async function (next) {
-  console.log(this);
   // Create this properties to use in the post middleware
   this.r = await this.findOne();
   next();
