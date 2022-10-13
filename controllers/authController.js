@@ -28,14 +28,14 @@ const createSendToken = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000 // hours, minute, second, milisecond
     ),
     // secure: true, // Cookie will be sent on only encrypted connection
-    httpOnly: true,
+    httpOnly: true, // Secure
   };
 
   // Send cookie
-  if (process.env.NODE_ENV === "production") cookieOptions.secure = true
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
   res.cookie('jwt', token, cookieOptions);
   // Hiding password from response
-  user.password = undefined
+  user.password = undefined;
 
   res.status(statusCode).json({
     status: 'success',
@@ -53,6 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
     passChangedAt: req.body.passChangedAt,
+    role: req.body.role,
   });
 
   createSendToken(newUser, 201, res);
@@ -67,10 +68,13 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   //! 2, check if user exists and password is correct
   const user = await User.findOne({ email }).select('+password'); // We have to select because it has been unselected in model
-  const correct = await user.correctPassword(password, user.password);
-  console.log(user);
+  if (!user) {
+    return next(new AppError('Incorrect email or password', 401));
+  }
 
-  if (!user || !correct) {
+  const correct = await user.correctPassword(password, user.password);
+
+  if (!correct) {
     return next(new AppError('Incorrect email or password', 401));
   }
 
@@ -79,14 +83,12 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
-  console.log('START PROTECT');
   //1, get token and check if it's exist
   let token;
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
-    console.log('AUTHORIZED: ', req.headers.authorization);
     token = req.headers.authorization.split(' ')[1];
   }
   if (!token) {
@@ -115,7 +117,6 @@ exports.protect = catchAsync(async (req, res, next) => {
       )
     );
   }
-  console.log('PROTECT OK');
   // Grant access to the next route
   req.user = currentUser;
   next();
@@ -202,19 +203,18 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
-  console.log('Start');
   //1, Get user from collection
   //! req.user is from the authController.protect() middleware
   const user = await User.findById(req.user._id).select('+password');
   if (!user) {
     return next(new AppError('Please provide a valid id', 400));
   }
-  console.log('User OK');
+
   //2, Check if posted current password is correct
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
     return next(new AppError('Your current password is not correct', 401));
   }
-  console.log('PASSWORD OK');
+
   //3, If so, update password
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;

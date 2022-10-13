@@ -19,8 +19,8 @@ const userSchema = new mongoose.Schema({
   photo: String,
   role: {
     type: String,
-    enum: ['user', 'guide', 'lead-guide', 'admin'],
     default: 'user',
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
   },
   password: {
     type: String,
@@ -50,11 +50,12 @@ const userSchema = new mongoose.Schema({
 
 //! This middleware occur before SAVED to the database
 userSchema.pre('save', async function (next) {
+// ENCRYPT PASSWORD
   //! This middleware will only occur if the password is modified (update/create)
   if (!this.isModified('password')) return next(); // If it is not modified => quit
 
   // Second params stand for how strong the password will be encrypted
-  this.password = await bcrypt.hash(this.password, 8);
+  this.password = await bcrypt.hash(this.password, 12);
 
   // Delete the passwordConfirm field
   this.passwordConfirm = undefined;
@@ -68,7 +69,7 @@ userSchema.pre('save', function (next) {
 
 userSchema.pre(/^find/, function (next) {
   // This point to the current query
-  this.find({ active: {$ne : false} });
+  this.find({ active: { $ne: false } });
   next();
 });
 
@@ -91,7 +92,6 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
 
 userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
-  console.log(resetToken);
   // Save the encrypted resetToken to the database
   this.passwordResetToken = crypto
     .createHash('sha256')

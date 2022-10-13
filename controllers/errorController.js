@@ -1,6 +1,7 @@
 const AppError = require('./../utils/appError');
 
 const handleCastErrorDB = (err) => {
+  console.log('CastError');
   const message = `Invavid ${err.path}: ${err.value}.`;
   return new AppError(message, 400);
 };
@@ -46,9 +47,6 @@ const sendErrorProduct = (err, res) => {
     });
     // Programming or other unknown error: don't leak error detail
   } else {
-    //1, log error
-    // console.error('ERROR: ', err);
-
     // 2, Send generic message
     res.status(500).json({
       status: 'error',
