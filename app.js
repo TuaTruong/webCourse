@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
-const hpp = require("hpp")
+const hpp = require('hpp');
 const AppError = require('./utils/appError');
 // GLOBAL MIDDLEWARE
 if (process.env.NODE_ENV === 'development') {
@@ -37,9 +37,18 @@ app.use(xss());
 app.use(express.static(`${__dirname}/public`));
 
 // Prevent parameter pollution
-app.use(hpp({
-  whitelist : ["duration"] // Allowed duplicated query
-}))
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'maxGroupSize',
+      'difficulty',
+      'ratingsAverage',
+      'ratingQuantity',
+      "price"
+    ], // Allowed duplicated query
+  })
+);
 
 // Test middleware
 app.use((req, res, next) => {
@@ -55,11 +64,6 @@ app.use('/api/v1/users', userRouter);
 
 // ! Handle all routes that has not been implemented
 app.all('*', (req, res, next) => {
-  // const err = new Error(`Can't find ${req.originalUrl} on this server`);
-  // err.status = 'fail';
-  // err.statusCode = 404;
-  // ! If we pass an param in the next() function, it will assume that the param is an err, stop all the middleware and send the err to the global error handling middleware
-  // next(err);
   next(new AppError(`Can't find ${req.originalUrl} on this server`));
 });
 

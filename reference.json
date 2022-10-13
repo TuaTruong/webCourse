@@ -1,0 +1,17 @@
+{
+  "_id": 222,
+  "title": "Interstella",
+  "releaseYear": 2014,
+  "actors": [
+    {
+      "name": "Tuan dep trai",
+      "age": 18,
+      "born": "TN"
+    },
+    {
+      "name": "Linh",
+      "age": 18,
+      "born": "TN"
+    }
+  ]
+}
